@@ -3,25 +3,12 @@ services:
     build: .
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
-    environment:
-      - WATCHFILES_FORCE_POLLING=true
-    # Conectamos la API a la misma red para que vea a RabbitMQ
     depends_on:
       - rabbitmq
+    restart: on-failure
 
   rabbitmq:
     image: rabbitmq:4-management
-    container_name: rabbitmq-taller4
     ports:
-      - "5672:5672" # Puerto de comunicación (App <-> RabbitMQ)
-      - "15672:15672" # Puerto del Dashboard Web
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
-volumes:
-  rabbitmq_data:
+      - "5672:5672"
+      - "15672:15672"

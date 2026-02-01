@@ -10,10 +10,17 @@ class UsuarioService:
     def registrar_usuario(self, nombre: str, email: str, password: str):
         nuevo_usuario = Usuario(nombre=nombre, email=email, password=password)
         
-        # 1. Guardar en BD
-        self.repositorio.guardar(nuevo_usuario)
+        usuario_guardado = self.repositorio.guardar(nuevo_usuario)
         
-        # 2. Notificar a RabbitMQ
         self.notificador.enviar_mensaje(f"Bienvenido {nombre}, tu cuenta fue creada.")
         
-        return nuevo_usuario
+        return usuario_guardado
+    
+    def obtener_usuario_por_id(self, usuario_id: int):
+        usuario = self.repositorio.obtener_por_id(usuario_id)
+        if not usuario:
+            raise ValueError(f"Usuario con ID {usuario_id} no encontrado")
+        return usuario
+    
+    def obtener_todos_usuarios(self):
+        return self.repositorio.obtener_todos()
