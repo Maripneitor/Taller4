@@ -46,4 +46,4 @@ usuarios/           pedidos/
 ```
 
 ## 📝 Autor
-[Tu nombre]
+Mario Erain Moguel Hernandez
