@@ -1,49 +1,66 @@
-# Taller 4 - Arquitectura Hexagonal con FastAPI
+# Taller 4: Microservicios de Restaurante (Arquitectura Hexagonal)
 
-## 📋 Descripción
-Aplicación de usuarios y pedidos implementando arquitectura hexagonal con FastAPI y RabbitMQ.
+Sistema de microservicios con IDs numéricos y arquitectura limpia.
 
-## 🚀 Instalación y Ejecución
+## Arquitectura
+- **domain**: Entidades simples.
+- **application**: Puertos y Servicios (Lógica).
+- **infraestructura**: API (FastAPI) y Adapters (Memoria).
 
-### Con Docker (Recomendado):
+## Cómo Correr con Docker
 ```bash
-# 1. Clonar repositorio
-git clone [TU-REPO-URL]
-cd maripneitor-taller4
-
-# 2. Levantar servicios
 docker compose up --build
-
-# 3. Acceder a la API
-#    http://localhost:8000
-#    http://localhost:8000/docs (Swagger UI)
 ```
 
-## 📡 Endpoints
+## Pruebas con curl (Paso a Paso)
 
-### Usuarios:
-- `GET /` - Mensaje de bienvenida
-- `POST /usuarios/?nombre=X&email=Y&password=Z` - Crear usuario
-- `GET /usuarios/{id}` - Obtener usuario por ID
-- `GET /usuarios/` - Listar todos los usuarios
-
-### Pedidos:
-- `POST /pedidos/?id_usuario=X&producto=Y&cantidad=Z` - Crear pedido
-- `GET /usuarios/{id}/pedidos` - Listar pedidos de un usuario
-
-## 🐰 RabbitMQ
-- Dashboard: http://localhost:15672
-- Usuario: `guest`
-- Contraseña: `guest`
-- Cola: `registro_usuarios`
-
-## 🏗️ Arquitectura
-```
-usuarios/           pedidos/
-├── domain/         ├── domain/
-├── application/    ├── application/
-└── infrastructure/ └── infrastructure/
+### 1. Servicios Health
+```bash
+curl http://localhost:8001/health
+curl http://localhost:8002/health
 ```
 
-## 📝 Autor
-Mario Erain Moguel Hernandez
+### 2. Flujo Usuarios (ID numérico)
+```bash
+# A) Crear usuario
+curl -X POST http://localhost:8001/usuarios/ -H "Content-Type: application/json" -d '{"nombre": "Mario", "email": "mario@example.com"}'
+
+# B) Listar todos
+curl http://localhost:8001/usuarios/
+
+# C) Consultar por ID 1
+curl http://localhost:8001/usuarios/1
+
+# D) Actualizar nombre
+curl -X PUT http://localhost:8001/usuarios/1 -H "Content-Type: application/json" -d '{"nombre": "Mario Efrain"}'
+
+# E) Eliminar
+curl -X DELETE http://localhost:8001/usuarios/1
+
+# F) Confirmar 404
+curl http://localhost:8001/usuarios/1
+```
+
+### 3. Flujo Pedidos (ID numérico)
+```bash
+# A) Crear pedido para usuario 1
+curl -X POST http://localhost:8002/pedidos/ -H "Content-Type: application/json" -d '{"idusuario": 1, "total": 100.5}'
+
+# B) Listar todos
+curl http://localhost:8002/pedidos/
+
+# C) Listar pedidos del usuario 1
+curl http://localhost:8002/pedidos/usuario/1
+
+# D) Actualizar total del pedido 1
+curl -X PUT http://localhost:8002/pedidos/1 -H "Content-Type: application/json" -d '{"total": 150.0}'
+
+# E) Eliminar
+curl -X DELETE http://localhost:8002/pedidos/1
+```
+
+## Pruebas Locales (Pytest)
+```bash
+export PYTHONPATH=$PYTHONPATH:.
+python3 -m pytest services/usuarios/tests services/pedidos/tests -q
+```
