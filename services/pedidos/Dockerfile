@@ -5,8 +5,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copiamos en la estructura anidada
+COPY . /app/services/pedidos
 
 ENV PYTHONPATH=/app
 
-CMD ["python", "main.py"]
+CMD ["python", "/app/services/pedidos/main.py"]
