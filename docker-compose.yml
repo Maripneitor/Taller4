@@ -1,26 +1,25 @@
 version: '3.8'
 
 services:
-  usuarios_service:
+  pacientes_service:
     build:
-      context: ./services/usuarios
+      context: ./services/pacientes
       dockerfile: Dockerfile
     ports:
       - "8001:8001"
     volumes:
-      # CAMBIO AQUÍ: Montar en la ruta anidada
-      - ./services/usuarios:/app/services/usuarios
+      - ./services/pacientes:/app/services/pacientes
     environment:
       - PYTHONPATH=/app
 
-  pedidos_service:
+  doctores_service:
     build:
-      context: ./services/pedidos
+      context: ./services/doctores
       dockerfile: Dockerfile
     ports:
       - "8002:8002"
     volumes:
-      # CAMBIO AQUÍ: Montar en la ruta anidada
-      - ./services/pedidos:/app/services/pedidos
+      - ./services/doctores:/app/services/doctores
+
     environment:
       - PYTHONPATH=/app
